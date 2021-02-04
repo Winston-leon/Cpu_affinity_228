@@ -89,6 +89,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 #include "ut0crc32.h"
 #endif /* !UNIV_HOTBACKUP */
 #include "ut0mem.h"
+#include "sql/ConnBindManager.h"
 
 #ifdef UNIV_HOTBACKUP
 #include "page0size.h"
@@ -3028,7 +3029,7 @@ void srv_purge_coordinator_thread() {
   ut_a(srv_force_recovery < SRV_FORCE_NO_BACKGROUND);
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LP]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LP]);
 #endif
 
   rw_lock_x_lock(&purge_sys->latch);

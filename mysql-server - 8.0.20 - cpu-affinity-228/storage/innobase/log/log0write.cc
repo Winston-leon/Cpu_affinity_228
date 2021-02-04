@@ -69,6 +69,7 @@ the file COPYING.Google.
 #include "trx0roll.h"
 #include "trx0sys.h"
 #include "trx0trx.h"
+#include "sql/ConnBindManager.h"
 
 /**************************************************/ /**
  @page PAGE_INNODB_REDO_LOG_THREADS Background redo log threads
@@ -1970,7 +1971,7 @@ void log_writer(log_t *log_ptr) {
   lsn_t ready_lsn = 0;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LW]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LW]);
 #endif
 
   log_writer_mutex_enter(log);
@@ -2211,7 +2212,7 @@ void log_flusher(log_t *log_ptr) {
   log_t &log = *log_ptr;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LF]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LF]);
 #endif
 
   Log_thread_waiting waiting{log, log.flusher_event, srv_log_flusher_spin_delay,
@@ -2344,7 +2345,7 @@ void log_write_notifier(log_t *log_ptr) {
   lsn_t lsn = log.write_lsn.load() + 1;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LWN]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LWN]);
 #endif
 
   log_write_notifier_mutex_enter(log);
@@ -2447,7 +2448,7 @@ void log_flush_notifier(log_t *log_ptr) {
   lsn_t lsn = log.flushed_to_disk_lsn.load() + 1;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LFN]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LFN]);
 #endif
 
   log_flush_notifier_mutex_enter(log);
@@ -2550,7 +2551,7 @@ void log_closer(log_t *log_ptr) {
   lsn_t end_lsn = 0;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LC]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LC]);
 #endif
 
   log_closer_mutex_enter(log);

@@ -27,6 +27,7 @@
 #include <list>
 #include <new>
 
+#include "sql/ConnBindManager.h"
 #include "my_compiler.h"
 #include "my_dbug.h"
 #include "my_inttypes.h"

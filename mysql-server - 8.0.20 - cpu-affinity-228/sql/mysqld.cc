@@ -6742,9 +6742,7 @@ int mysqld_main(int argc, char **argv)
   if (init_server_components()) unireg_abort(MYSQLD_ABORT_EXIT);
 
 #ifdef HAVE_LIBNUMA
-  connBindManager = new ConnBindManager();
-
-  connBindManager.init(bind_attrs);
+  connBindManager.Init(bind_attrs);
 #endif
 
 

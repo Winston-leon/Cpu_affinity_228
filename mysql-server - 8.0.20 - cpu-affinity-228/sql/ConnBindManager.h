@@ -7,9 +7,7 @@
 #include <mutex>
 #include <cstdio>
 #include <pthread.h>
-#include <vector.h>
-
-extern ConnBindManager connBindManger;
+#include <vector>
 
 enum CpuBitMaskId {
     BM_USER = 0,
@@ -36,7 +34,7 @@ struct CPUInfo {
     int cpuNumPerNode;
     struct bitmask* procAvailCpuMask;
 
-    struct bitmask* bms[BT_MAX];
+    struct bitmask* bms[BM_MAX];
 };
 
 class ConnBindManager {
@@ -49,12 +47,13 @@ public:
     void DynamicUnbind(THD *thd);
     void StaticBind(struct bitmask* bm);
     void StaticUnbind(struct bitmask* bm);
+    CPUInfo getCpuInfo();
 
 private:
     void AssignConnBindAttr(char* attrs[]);
     void GetProcessCpuInfo();
     void InitCpuSetThreadCount();
-    bool CheckAttrValid(char* attr, strcut bitmask* bm);
+    bool CheckAttrValid(const char* attr, struct bitmask* bm);
     bool CheckCpuBind();
     void CheckUserBackgroundConflict(struct bitmask* bm1, struct bitmask* bm2);
     bool CheckThreadProcConflict(struct bitmask* bm1, struct bitmask* bm2);
@@ -63,7 +62,9 @@ private:
     std::vector<CpuSetThreadCount> cpuSetThreadCount;
     CPUInfo cpuInfo;
     const char* connBindAttr[BM_MAX];
-    mutex mu;
-}
+    std::mutex mu;
+};
+
+extern ConnBindManager connBindManager;
 
 #endif /* CONN_BIND_MANAGER_H */

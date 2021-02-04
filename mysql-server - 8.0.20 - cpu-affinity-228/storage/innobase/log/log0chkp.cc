@@ -66,6 +66,7 @@ the file COPYING.Google.
 #include "trx0roll.h"
 #include "trx0sys.h"
 #include "trx0trx.h"
+#include "sql/ConnBindManager.h"
 
 #ifndef UNIV_HOTBACKUP
 
@@ -958,7 +959,7 @@ void log_checkpointer(log_t *log_ptr) {
   log_t &log = *log_ptr;
 
 #ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.cpuInfo.bms[BM_LCP]);
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LCP]);
 #endif
 
   log_checkpointer_mutex_enter(log);

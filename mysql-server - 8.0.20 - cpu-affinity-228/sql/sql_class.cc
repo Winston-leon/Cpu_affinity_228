@@ -574,7 +574,7 @@ THD::THD(bool enable_plugins)
   set_system_user(false);
 }
 
-#ifndef HAVE_LIBNUMA
+#ifdef HAVE_LIBNUMA
 void THD::set_thread_bind_node(int pos) {
   thread_bind_node = pos;
 }
