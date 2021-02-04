@@ -954,13 +954,13 @@ static bool log_consider_checkpoint(log_t &log) {
 }
 
 void log_checkpointer(log_t *log_ptr) {
-  ut_a(log_ptr != nullptr);
-
-  log_t &log = *log_ptr;
-
 #ifdef HAVE_LIBNUMA
   connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LCP]);
 #endif
+
+  ut_a(log_ptr != nullptr);
+
+  log_t &log = *log_ptr;
 
   log_checkpointer_mutex_enter(log);
 

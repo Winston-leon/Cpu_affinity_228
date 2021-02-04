@@ -1965,14 +1965,14 @@ static void log_writer_write_buffer(log_t &log, lsn_t next_write_lsn) {
 }
 
 void log_writer(log_t *log_ptr) {
+#ifdef HAVE_LIBNUMA
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LW]);
+#endif
+
   ut_a(log_ptr != nullptr);
 
   log_t &log = *log_ptr;
   lsn_t ready_lsn = 0;
-
-#ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LW]);
-#endif
 
   log_writer_mutex_enter(log);
 
@@ -2207,13 +2207,13 @@ static void log_flush_low(log_t &log) {
 }
 
 void log_flusher(log_t *log_ptr) {
-  ut_a(log_ptr != nullptr);
-
-  log_t &log = *log_ptr;
-
 #ifdef HAVE_LIBNUMA
   connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LF]);
 #endif
+
+  ut_a(log_ptr != nullptr);
+
+  log_t &log = *log_ptr;
 
   Log_thread_waiting waiting{log, log.flusher_event, srv_log_flusher_spin_delay,
                              srv_log_flusher_timeout};
@@ -2339,14 +2339,14 @@ void log_flusher(log_t *log_ptr) {
 /* @{ */
 
 void log_write_notifier(log_t *log_ptr) {
+#ifdef HAVE_LIBNUMA
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LWN]);
+#endif
+
   ut_a(log_ptr != nullptr);
 
   log_t &log = *log_ptr;
   lsn_t lsn = log.write_lsn.load() + 1;
-
-#ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LWN]);
-#endif
 
   log_write_notifier_mutex_enter(log);
 
@@ -2442,14 +2442,14 @@ void log_write_notifier(log_t *log_ptr) {
 /* @{ */
 
 void log_flush_notifier(log_t *log_ptr) {
+#ifdef HAVE_LIBNUMA
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LFN]);
+#endif
+
   ut_a(log_ptr != nullptr);
 
   log_t &log = *log_ptr;
   lsn_t lsn = log.flushed_to_disk_lsn.load() + 1;
-
-#ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LFN]);
-#endif
 
   log_flush_notifier_mutex_enter(log);
 
@@ -2545,14 +2545,14 @@ void log_flush_notifier(log_t *log_ptr) {
 /* @{ */
 
 void log_closer(log_t *log_ptr) {
+#ifdef HAVE_LIBNUMA
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LC]);
+#endif
+
   ut_a(log_ptr != nullptr);
 
   log_t &log = *log_ptr;
   lsn_t end_lsn = 0;
-
-#ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LC]);
-#endif
 
   log_closer_mutex_enter(log);
 

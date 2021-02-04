@@ -3013,6 +3013,10 @@ static void srv_purge_coordinator_suspend(
 
 /** Purge coordinator thread that schedules the purge tasks. */
 void srv_purge_coordinator_thread() {
+#ifdef HAVE_LIBNUMA
+  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LP]);
+#endif
+
   srv_slot_t *slot;
 
 #ifdef UNIV_PFS_THREAD
@@ -3027,10 +3031,6 @@ void srv_purge_coordinator_thread() {
   ut_a(srv_n_purge_threads >= 1);
   ut_a(trx_purge_state() == PURGE_STATE_INIT);
   ut_a(srv_force_recovery < SRV_FORCE_NO_BACKGROUND);
-
-#ifdef HAVE_LIBNUMA
-  connBindManager.StaticBind(connBindManager.getCpuInfo().bms[BM_LP]);
-#endif
 
   rw_lock_x_lock(&purge_sys->latch);
 
